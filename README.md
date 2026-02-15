@@ -1,98 +1,146 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📦 Sistema de Inventário
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para gerenciamento de inventário construída com **NestJS**, **Prisma** e **PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Funcionalidades
 
-## Description
+- **Autenticação JWT** — Registro, login e controle de acesso por roles (ADMIN/USER)
+- **CRUD de Produtos** — Nome, descrição, preço, SKU, quantidade, estoque mínimo
+- **Categorias** — Organização dos produtos por categorias
+- **Fornecedores** — Cadastro de fornecedores vinculados a produtos
+- **Controle de Estoque** — Entradas/saídas com histórico completo
+- **Swagger** — Documentação interativa da API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologias
 
-## Project setup
+- [NestJS](https://nestjs.com/) v11
+- [Prisma](https://www.prisma.io/) v7
+- [PostgreSQL](https://www.postgresql.org/)
+- [Passport JWT](http://www.passportjs.org/)
+- [Swagger](https://swagger.io/)
 
-```bash
-$ pnpm install
-```
+## Pré-requisitos
 
-## Compile and run the project
+- Node.js 18+
+- PostgreSQL rodando localmente (ou via Docker)
+- pnpm
+
+## Setup Rápido
 
 ```bash
-# development
-$ pnpm run start
+# 1. Clonar e instalar
+git clone <repo-url>
+cd Inventory
+pnpm install
 
-# watch mode
-$ pnpm run start:dev
+# 2. Configurar variáveis de ambiente
+cp .env.example .env
+# Edite o .env com sua URL do PostgreSQL
 
-# production mode
-$ pnpm run start:prod
+# 3. Gerar Prisma Client
+npx prisma generate
+
+# 4. Rodar migrações
+npx prisma migrate dev --name init
+
+# 5. Popular banco com dados de exemplo
+npx prisma db seed
+
+# 6. Iniciar servidor
+pnpm start:dev
 ```
 
-## Run tests
+Ou execute tudo de uma vez:
+```bash
+chmod +x setup.sh && ./setup.sh
+```
+
+## Acesso
+
+| Recurso | URL |
+|---------|-----|
+| API | http://localhost:3000/api |
+| Swagger Docs | http://localhost:3000/api/docs |
+
+### Credenciais padrão (seed)
+- **Email:** admin@inventory.com
+- **Senha:** admin123
+
+## Endpoints da API
+
+### Autenticação
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/auth/register` | Registrar novo usuário |
+| POST | `/api/auth/login` | Fazer login (retorna JWT) |
+| GET | `/api/auth/profile` | Perfil do usuário autenticado 🔒 |
+
+### Categorias 🔒
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/categories` | Criar categoria |
+| GET | `/api/categories` | Listar categorias |
+| GET | `/api/categories/:id` | Buscar por ID |
+| PATCH | `/api/categories/:id` | Atualizar |
+| DELETE | `/api/categories/:id` | Remover |
+
+### Fornecedores 🔒
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/suppliers` | Cadastrar fornecedor |
+| GET | `/api/suppliers` | Listar fornecedores |
+| GET | `/api/suppliers/:id` | Buscar por ID |
+| PATCH | `/api/suppliers/:id` | Atualizar |
+| DELETE | `/api/suppliers/:id` | Remover |
+
+### Produtos 🔒
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/products` | Criar produto |
+| GET | `/api/products` | Listar (com busca via ?search=) |
+| GET | `/api/products/low-stock` | Produtos com estoque baixo |
+| GET | `/api/products/:id` | Buscar por ID |
+| PATCH | `/api/products/:id` | Atualizar |
+| DELETE | `/api/products/:id` | Remover |
+
+### Estoque 🔒
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/stock/movement` | Registrar entrada/saída |
+| GET | `/api/stock/movements` | Listar movimentações |
+| GET | `/api/stock/movement/:id` | Buscar movimentação |
+| GET | `/api/stock/history/:productId` | Histórico do produto |
+
+> 🔒 = Requer token JWT no header `Authorization: Bearer <token>`
+
+## Estrutura do Projeto
+
+```
+src/
+├── auth/                  # Autenticação JWT
+│   ├── decorators/        # @Roles, @CurrentUser
+│   ├── dto/               # LoginDto, RegisterDto
+│   ├── guards/            # JwtAuthGuard, RolesGuard
+│   └── strategies/        # JwtStrategy
+├── categories/            # CRUD de categorias
+├── prisma/                # PrismaService (global)
+├── products/              # CRUD de produtos
+├── stock/                 # Controle de estoque
+├── suppliers/             # CRUD de fornecedores
+├── app.module.ts
+└── main.ts
+prisma/
+├── schema.prisma          # Schema do banco de dados
+└── seed.ts                # Dados iniciais
+```
+
+## Scripts Úteis
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm start:dev          # Iniciar em modo dev (hot reload)
+pnpm build              # Build para produção
+pnpm prisma:generate    # Regenerar Prisma Client
+pnpm prisma:migrate     # Criar/rodar migrações
+pnpm prisma:seed        # Popular banco
+pnpm prisma:studio      # Abrir Prisma Studio (UI do banco)
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
